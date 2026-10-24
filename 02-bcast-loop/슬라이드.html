@@ -1,0 +1,518 @@
+<title>전선 하나 더 꽂으면 폭탄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eef1f5;
+    --panel: #ffffff;
+    --ink: #182233;
+    --ink-soft: #566076;
+    --ink-faint: #828ca0;
+    --line: #ccd3dd;
+    --fixed: #3c4a63;
+    --fixed-soft: #c3c9d4;
+    --accent: #b5731f;
+    --accent-ink: #ffffff;
+    --accent-soft: #f3dfc2;
+    --code-bg: #182233;
+    --code-ink: #dbe2ee;
+    --code-faint: #8992a6;
+    --code-accent: #e3ab57;
+    --shadow: rgba(24, 34, 51, 0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #10141d;
+      --panel: #171d2a;
+      --ink: #e6eaf2;
+      --ink-soft: #a6afc2;
+      --ink-faint: #717b91;
+      --line: #2a3142;
+      --fixed: #67759a;
+      --fixed-soft: #313a4e;
+      --accent: #e3ab57;
+      --accent-ink: #1b140a;
+      --accent-soft: #3a2c15;
+      --code-bg: #0c0f17;
+      --code-ink: #dbe2ee;
+      --code-faint: #6b7488;
+      --code-accent: #e3ab57;
+      --shadow: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #10141d;
+    --panel: #171d2a;
+    --ink: #e6eaf2;
+    --ink-soft: #a6afc2;
+    --ink-faint: #717b91;
+    --line: #2a3142;
+    --fixed: #67759a;
+    --fixed-soft: #313a4e;
+    --accent: #e3ab57;
+    --accent-ink: #1b140a;
+    --accent-soft: #3a2c15;
+    --code-bg: #0c0f17;
+    --code-ink: #dbe2ee;
+    --code-faint: #6b7488;
+    --code-accent: #e3ab57;
+    --shadow: rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--paper);
+    overflow: hidden;
+  }
+  body {
+    color: var(--ink);
+    font-family: "Figtree", -apple-system, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", monospace; }
+
+  .deck {
+    position: fixed;
+    inset: 0;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deck { scroll-behavior: auto; }
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .slide {
+    height: 100%;
+    min-height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.6rem;
+    position: relative;
+  }
+  .slide-inner {
+    max-width: 780px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .slide.in-view .slide-inner { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .slide-inner { opacity: 1; transform: none; transition: none; }
+  }
+
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .eyebrow .n { color: var(--accent); font-weight: 700; }
+
+  h1 {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    line-height: 1.28;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 1rem;
+  }
+  h2.slide-title {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 3.4vw, 1.9rem);
+    line-height: 1.3;
+    text-wrap: balance;
+    margin: 0 0 1.6rem;
+  }
+
+  .lede {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 58ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .bitstrip-cap {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    margin-top: 0.8rem;
+  }
+  .bitstrip-cap b { color: var(--fixed); font-weight: 600; }
+  .bitstrip-cap em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* --- 커버: 숫자 비교 --- */
+  .stat-compare {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 5vw, 2.4rem);
+    margin-bottom: 0.3rem;
+  }
+  .stat-compare .big { color: var(--accent); }
+  .stat-compare .sep { color: var(--ink-faint); font-size: 1rem; font-weight: 500; }
+
+  /* --- 핵심 개념 카드 --- */
+  .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  @media (max-width: 600px) { .concepts { grid-template-columns: 1fr; } }
+  .concept {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .concept.wide { grid-column: 1 / -1; }
+  .concept h3 { margin: 0 0 0.5rem; font-size: 0.98rem; font-weight: 700; }
+  .concept p { margin: 0; color: var(--ink-soft); font-size: 0.91rem; }
+  .concept code, .lede code, .cap-note code {
+    font-family: "JetBrains Mono", monospace;
+    background: var(--accent-soft);
+    color: var(--ink);
+    padding: 0.05em 0.35em;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  /* --- 만화 그림 --- */
+  figure.comic-figure { margin: 0 0 1.5rem; }
+  figure.comic-figure svg { width: 100%; height: auto; display: block; }
+  figure.comic-figure figcaption {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  /* --- 실습 로그 패널 --- */
+  .panel { margin-bottom: 1.1rem; }
+  .panel-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin: 0 0 0.45rem;
+    padding-left: 0.1rem;
+  }
+  .panel pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    overflow-x: auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .panel .dim { color: var(--code-faint); }
+  .panel .hl { color: var(--code-accent); }
+
+  /* --- 한 줄 교훈 --- */
+  .takeaway {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.8rem;
+  }
+  .takeaway .eyebrow { color: var(--accent); margin-bottom: 0.6rem; }
+  .takeaway p { margin: 0; font-size: 1.02rem; color: var(--ink); }
+
+  .next-chapter {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .next-chapter span { color: var(--ink-faint); font-weight: 400; margin-right: 0.5rem; }
+  .meta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    margin-top: 0.6rem;
+  }
+
+  .railnav {
+    position: fixed;
+    right: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    z-index: 20;
+  }
+  .railnav button {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    background: var(--fixed-soft);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .railnav button:hover { transform: scale(1.15); }
+  .railnav button.active { background: var(--accent); }
+  .railnav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .counter {
+    position: fixed;
+    left: 1.4rem;
+    bottom: 1.3rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    z-index: 20;
+    letter-spacing: 0.04em;
+  }
+
+  .hint {
+    position: fixed;
+    left: 1.4rem;
+    bottom: 1.3rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    z-index: 19;
+    opacity: 0;
+    animation: hint-fade 6s ease forwards;
+  }
+  @keyframes hint-fade {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hint { animation: none; opacity: 0.8; }
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <section class="slide" id="s0">
+    <div class="slide-inner">
+      <p class="eyebrow">네트워크 발표 — 02. 브로드캐스트 도메인 &amp; L2 루프</p>
+      <h1>전선을 하나 더 꽂으면 두 배가 아니라 폭탄이 된다</h1>
+      <p class="lede">스위치가 어떻게 MAC을 기억하고, 모르면 어떻게 뿌리는지 봤잖아. 근데 전선을 두 개로 이으면 그 "모르면 다 뿌린다"는 성질이 어떻게 사고로 번지는지 직접 터뜨려봤어.</p>
+
+      <div class="stat-compare">
+        <span>9개</span>
+        <span class="sep">2초 만에 →</span>
+        <span class="big">13,369개</span>
+      </div>
+      <p class="bitstrip-cap">h2가 받은 패킷 수. <em>전선을 하나 더 연결했을 뿐</em>인데 <b>2초 만에 1.3만 배</b>로 폭증했어.</p>
+    </div>
+    <p class="hint">↓ 스크롤 또는 ↓ 키로 다음 슬라이드</p>
+  </section>
+
+  <section class="slide" id="s1">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">01</span> 오늘 알게 된 것</p>
+      <h2 class="slide-title">한 줄씩 정리하면 이래</h2>
+      <div class="concepts">
+        <div class="concept">
+          <h3>스위치는 어떻게 길을 알아?</h3>
+          <p>프레임이 들어온 포트에 "이 MAC은 여기 있다"고 적어둬(<b class="mono">MAC 학습</b>, 그 기록표가 <b class="mono">FDB</b>). 그다음부턴 그 포트로만 보내.</p>
+        </div>
+        <div class="concept">
+          <h3>모르는 주소로 가는 프레임은?</h3>
+          <p>기록이 없으면 "어차피 모르니까" 전 포트로 다 뿌려버려(<b class="mono">플러딩</b>). 브로드캐스트랑 똑같은 취급이야.</p>
+        </div>
+        <div class="concept wide">
+          <h3>왜 전선 2개가 사고로 이어져?</h3>
+          <p>두 링크를 <b>active-active</b>로 두면, 플러딩된 프레임이 서로에게 계속 되돌아가. 근데 이더넷 프레임엔 <code>TTL</code>(몇 번 돌면 버려지는 장치)이 없어서 — 한번 돌기 시작하면 아무도 못 멈춰.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s2">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">02</span> 그림으로 보면</p>
+      <h2 class="slide-title">전선 2개, 영원히 도는 프레임</h2>
+      <figure class="comic-figure">
+        <svg viewBox="0 0 560 190" role="img" aria-label="h1과 h2 사이에 sw1, sw2 두 스위치가 전선 2개(eth2, eth3)로 이어져 있고, 그 사이에서 프레임이 무한히 도는 그림(가운데 무한 기호)">
+          <defs>
+            <marker id="loopArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <rect x="10" y="80" width="70" height="50" rx="8" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <text x="45" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">h1</text>
+          <rect x="150" y="70" width="80" height="60" rx="8" fill="var(--panel)" stroke="currentColor" stroke-width="3"/>
+          <text x="190" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">sw1</text>
+          <rect x="330" y="70" width="80" height="60" rx="8" fill="var(--panel)" stroke="currentColor" stroke-width="3"/>
+          <text x="370" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">sw2</text>
+          <rect x="480" y="80" width="70" height="50" rx="8" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <text x="515" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">h2</text>
+
+          <line x1="80" y1="105" x2="150" y2="105" stroke="currentColor" stroke-width="3"/>
+          <line x1="410" y1="105" x2="480" y2="105" stroke="currentColor" stroke-width="3"/>
+
+          <path d="M230 85 C 270 55, 290 55, 330 85" stroke="var(--accent)" stroke-width="4" fill="none" marker-end="url(#loopArrow)"/>
+          <path d="M330 120 C 290 150, 270 150, 230 120" stroke="var(--accent)" stroke-width="4" fill="none" marker-end="url(#loopArrow)"/>
+          <text x="280" y="46" text-anchor="middle" font-size="11" fill="var(--ink-faint)">eth2</text>
+          <text x="280" y="168" text-anchor="middle" font-size="11" fill="var(--ink-faint)">eth3</text>
+          <text x="280" y="108" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">∞</text>
+        </svg>
+        <figcaption>링크가 2개면 sw1→sw2→sw1→sw2… 프레임이 끝없이 돈다. 이더넷엔 멈추게 할 TTL이 없어서.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" id="s3">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">03</span> 직접 확인한 것 — 스톰 점화</p>
+      <h2 class="slide-title">정상 통신까지 같이 묻힌다</h2>
+      <div class="panel">
+        <p class="panel-label">$ 루프 완성(eth3 up) + ping 1번, 2초 후 카운터</p>
+        <pre>rx_packets (점화 전):  9
+rx_packets (2초 후):   <span class="hl">13,369</span>   <span class="dim"># +13,360</span>
+
+$ ping -c2 10.2.0.2
+<span class="hl">100% packet loss</span>  <span class="dim"># 멀쩡한 직결 구간인데도!</span></pre>
+      </div>
+      <p class="lede" style="margin-bottom:0;">전선이 많아져서 더 튼튼해진 게 아니라, 모든 트래픽이 그 폭풍 속에 같이 묻혀버린 거야.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s4">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">04</span> 그림으로 보면</p>
+      <h2 class="slide-title">한쪽을 "대기"로 잠가버리기</h2>
+      <figure class="comic-figure">
+        <svg viewBox="0 0 560 190" role="img" aria-label="같은 두 스위치 그림인데, eth2는 계속 쓰는 중(forwarding)이고 eth3는 자물쇠 아이콘과 함께 블로킹(대기) 상태로 잠긴 그림">
+          <rect x="10" y="80" width="70" height="50" rx="8" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <text x="45" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">h1</text>
+          <rect x="150" y="70" width="80" height="60" rx="8" fill="var(--panel)" stroke="currentColor" stroke-width="3"/>
+          <text x="190" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">sw1</text>
+          <rect x="330" y="70" width="80" height="60" rx="8" fill="var(--panel)" stroke="currentColor" stroke-width="3"/>
+          <text x="370" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">sw2</text>
+          <rect x="480" y="80" width="70" height="50" rx="8" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <text x="515" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">h2</text>
+
+          <line x1="80" y1="105" x2="150" y2="105" stroke="currentColor" stroke-width="3"/>
+          <line x1="410" y1="105" x2="480" y2="105" stroke="currentColor" stroke-width="3"/>
+
+          <path d="M230 85 C 270 55, 290 55, 330 85" stroke="var(--accent)" stroke-width="4" fill="none"/>
+          <text x="280" y="46" text-anchor="middle" font-size="11" fill="var(--ink-faint)">eth2 — forwarding (사용 중)</text>
+
+          <path d="M330 120 C 290 150, 270 150, 230 120" stroke="var(--fixed-soft)" stroke-width="4" fill="none" stroke-dasharray="3 5"/>
+          <text x="280" y="172" text-anchor="middle" font-size="11" fill="var(--ink-faint)">eth3 — blocking (대기)</text>
+          <rect x="272" y="124" width="16" height="13" rx="2" fill="var(--fixed)"/>
+          <path d="M274 124 a6 7 0 1 1 12 0" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <figcaption>STP가 둘 중 하나(eth3)를 블로킹으로 잠가서, 전선은 그대로 있어도 논리적으로는 순환이 안 생겨.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" id="s5">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">05</span> 직접 확인한 것 — STP 수정</p>
+      <h2 class="slide-title">전선은 2개 다 꽂혀 있는데 멀쩡하다</h2>
+      <div class="panel">
+        <p class="panel-label">$ 양쪽 스위치에 STP 켜고 ~30초 수렴 후</p>
+        <pre>eth1 ... state forwarding
+eth2 ... state forwarding
+eth3 ... state <span class="hl">blocking</span>   <span class="dim"># active-standby 처럼 잠김</span>
+
+$ ping -c3 10.2.0.2
+<span class="hl">0% packet loss</span>  <span class="dim"># 루프 전선이 그대로 살아있는데도 정상!</span></pre>
+      </div>
+      <p class="lede" style="margin-bottom:0;">링크는 그대로 2개 다 꽂혀 있지만, 논리적으로는 항상 1개만 살아있는 트리로 묶여 있어 — eth2가 죽으면 eth3가 자동으로 깨어나.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s6">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">06</span> 오늘의 한 줄 정리</p>
+      <div class="takeaway">
+        <p>스위치는 "소스 MAC 학습 + 모르면 플러딩"이라는 단순한 규칙만 가지고 있어. 이더넷엔 TTL이 없어서, 전선을 active-active로 두 개 이으면 그 단순함이 무한 증폭(스톰)으로 터져버려. STP는 한쪽을 standby로 묶어서 이걸 막아줘.</p>
+      </div>
+      <p class="next-chapter"><span>다음 시간 →</span>04장. 다른 동네(서브넷)로 넘어가는 라우터와 라우팅 테이블</p>
+      <p class="meta">2026-10-24 · 질문→추측→실습검증→설명→피드백</p>
+    </div>
+  </section>
+
+</div>
+
+<nav class="railnav" id="railnav" aria-label="슬라이드 이동"></nav>
+<p class="counter" id="counter">01 / 07</p>
+
+<script>
+(function () {
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('railnav');
+  var counter = document.getElementById('counter');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var current = 0;
+
+  slides.forEach(function (slide, i) {
+    var dot = document.createElement('button');
+    dot.setAttribute('aria-label', '슬라이드 ' + (i + 1) + ' / ' + slides.length);
+    dot.addEventListener('click', function () {
+      slide.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    });
+    rail.appendChild(dot);
+  });
+  var dots = Array.prototype.slice.call(rail.children);
+
+  function setActive(i) {
+    if (i === current) return;
+    current = i;
+    dots.forEach(function (d, idx) { d.classList.toggle('active', idx === i); });
+    counter.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
+        var idx = slides.indexOf(entry.target);
+        entry.target.classList.add('in-view');
+        setActive(idx);
+      }
+    });
+  }, { root: deck, threshold: [0.55] });
+  slides.forEach(function (s) { io.observe(s); });
+
+  window.addEventListener('keydown', function (e) {
+    if (['ArrowDown', 'PageDown', ' '].indexOf(e.key) !== -1 && !e.shiftKey) {
+      e.preventDefault();
+      var next = slides[Math.min(current + 1, slides.length - 1)];
+      next.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    } else if (['ArrowUp', 'PageUp'].indexOf(e.key) !== -1 || (e.key === ' ' && e.shiftKey)) {
+      e.preventDefault();
+      var prev = slides[Math.max(current - 1, 0)];
+      prev.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    }
+  });
+})();
+</script>

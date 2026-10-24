@@ -70,8 +70,9 @@ network-fundamentals-lab-study/   (이 레포 자체가 루트, 자체 git)
 |---|---|---|---|
 | 00. 온램프 | `00-onramp/` | 완료 (Q1~Q5) | 완료 — https://claude.ai/code/artifact/2057e3b8-1593-4426-8f06-2ae4efa52bac |
 | 01. L2 인접성 & ARP | `01-l2-arp/` | 완료 (복습+Q1,Q2) | 완료 — https://claude.ai/code/artifact/bba93606-c8e6-4416-816d-ef6827c5b0f9 |
+| 02. 브로드캐스트 도메인 & L2 루프 | `02-bcast-loop/` | 완료 (복습+Q1~Q3+STP) | 완료 — `02-bcast-loop/슬라이드.html` |
 
-**다음 목표**: 02장(브로드캐스트 도메인 & L2 루프)
+**다음 목표**: 04장(L3 라우팅 & 기본 게이트웨이)
 
 ## 커리큘럼 순서 (코어 트랙 먼저)
 
