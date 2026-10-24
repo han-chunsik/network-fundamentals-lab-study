@@ -1,6 +1,13 @@
 # 학습 가이드 — 새 세션은 이 문서부터 읽는다
 
-이 폴더는 `network-fundamentals-lab`을 Claude와 함께 공부한 기록이다.
+이 레포(`network-fundamentals-lab-study`)는 **다른 사람 소유의 레포**(`gnu-gnu/network-fundamentals-lab`,
+로컬 경로 `~/Desktop/network-fundamentals-lab`)를 교재로 공부한 **내 학습 기록**이다.
+두 레포는 완전히 분리되어 있다 — 교재 레포는 그대로 두고(언제든 `git pull`로 깨끗하게 업데이트 받을 수 있게),
+학습노트/슬라이드 같은 내 결과물만 이 별도 레포·별도 git 이력으로 관리한다.
+
+- 교재(실습 콘텐츠): `~/Desktop/network-fundamentals-lab/` — 각 장 README.md/WALKTHROUGH.md/*.clab.yml
+- 내 학습 기록(이 레포): `~/Desktop/network-fundamentals-lab-study/` — 세션별 노트 + 슬라이드
+
 **새 세션에서 이어서 공부할 때는, 이 문서를 먼저 읽고, 그다음 숫자가 가장 큰 `session-NN/` 폴더의 노트를 읽어서
 어디까지 했는지 확인한 뒤 이어서 진행한다.**
 
@@ -28,7 +35,7 @@
 ## 세션 / 노트 구조
 
 ```
-학습노트/
+network-fundamentals-lab-study/   (이 레포 자체가 루트, 자체 git)
 ├── GUIDE.md              ← 이 문서
 ├── session-01/
 │   └── 노트.md            ← 그 세션의 Q&A 기록 (5단계 형식)
@@ -70,4 +77,4 @@
 → 확장트랙: 03(VLAN) · 06(TTL) · 07(VXLAN) · 13(터널MTU) · 15(ICMP차단) · 16(NAT헤어핀) · 17(동적라우팅)
 ```
 
-세부 설명은 레포 루트 `README.md`의 "커리큘럼" 섹션 참고.
+세부 설명은 교재 레포(`~/Desktop/network-fundamentals-lab/README.md`)의 "커리큘럼" 섹션 참고.
