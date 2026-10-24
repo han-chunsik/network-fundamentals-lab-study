@@ -1,0 +1,551 @@
+<title>같은 스위치, 다른 동네</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #eef1f5;
+    --panel: #ffffff;
+    --ink: #182233;
+    --ink-soft: #566076;
+    --ink-faint: #828ca0;
+    --line: #ccd3dd;
+    --fixed: #3c4a63;
+    --fixed-soft: #c3c9d4;
+    --accent: #b5731f;
+    --accent-ink: #ffffff;
+    --accent-soft: #f3dfc2;
+    --code-bg: #182233;
+    --code-ink: #dbe2ee;
+    --code-faint: #8992a6;
+    --code-accent: #e3ab57;
+    --shadow: rgba(24, 34, 51, 0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #10141d;
+      --panel: #171d2a;
+      --ink: #e6eaf2;
+      --ink-soft: #a6afc2;
+      --ink-faint: #717b91;
+      --line: #2a3142;
+      --fixed: #67759a;
+      --fixed-soft: #313a4e;
+      --accent: #e3ab57;
+      --accent-ink: #1b140a;
+      --accent-soft: #3a2c15;
+      --code-bg: #0c0f17;
+      --code-ink: #dbe2ee;
+      --code-faint: #6b7488;
+      --code-accent: #e3ab57;
+      --shadow: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #10141d;
+    --panel: #171d2a;
+    --ink: #e6eaf2;
+    --ink-soft: #a6afc2;
+    --ink-faint: #717b91;
+    --line: #2a3142;
+    --fixed: #67759a;
+    --fixed-soft: #313a4e;
+    --accent: #e3ab57;
+    --accent-ink: #1b140a;
+    --accent-soft: #3a2c15;
+    --code-bg: #0c0f17;
+    --code-ink: #dbe2ee;
+    --code-faint: #6b7488;
+    --code-accent: #e3ab57;
+    --shadow: rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--paper);
+    overflow: hidden;
+  }
+  body {
+    color: var(--ink);
+    font-family: "Figtree", -apple-system, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", monospace; }
+
+  .deck {
+    position: fixed;
+    inset: 0;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deck { scroll-behavior: auto; }
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .slide {
+    height: 100%;
+    min-height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.6rem;
+    position: relative;
+  }
+  .slide-inner {
+    max-width: 780px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .slide.in-view .slide-inner { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .slide-inner { opacity: 1; transform: none; transition: none; }
+  }
+
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .eyebrow .n { color: var(--accent); font-weight: 700; }
+
+  h1 {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.7rem, 4.4vw, 2.5rem);
+    line-height: 1.28;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 1rem;
+  }
+  h2.slide-title {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 3.4vw, 1.9rem);
+    line-height: 1.3;
+    text-wrap: balance;
+    margin: 0 0 1.6rem;
+  }
+
+  .lede {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 58ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .bitstrip-cap {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    margin-top: 0.8rem;
+  }
+  .bitstrip-cap b { color: var(--fixed); font-weight: 600; }
+  .bitstrip-cap em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* --- 커버: IP 비교 --- */
+  .ip-compare {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(1.3rem, 4.2vw, 2rem);
+    margin-bottom: 0.3rem;
+  }
+  .ip-compare .diff { color: var(--accent); }
+  .ip-compare .sep { color: var(--ink-faint); font-size: 1rem; font-weight: 500; }
+
+  /* --- 핵심 개념 카드 --- */
+  .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  @media (max-width: 600px) { .concepts { grid-template-columns: 1fr; } }
+  .concept {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .concept.wide { grid-column: 1 / -1; }
+  .concept h3 { margin: 0 0 0.5rem; font-size: 0.98rem; font-weight: 700; }
+  .concept p { margin: 0; color: var(--ink-soft); font-size: 0.91rem; }
+  .concept code, .lede code, .cap-note code {
+    font-family: "JetBrains Mono", monospace;
+    background: var(--accent-soft);
+    color: var(--ink);
+    padding: 0.05em 0.35em;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  /* --- 만화 그림 --- */
+  figure.comic-figure { margin: 0 0 1.5rem; }
+  figure.comic-figure svg { width: 100%; height: auto; display: block; }
+  figure.comic-figure figcaption {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  /* --- 실습 로그 패널 --- */
+  .panel { margin-bottom: 1.1rem; }
+  .panel-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin: 0 0 0.45rem;
+    padding-left: 0.1rem;
+  }
+  .panel pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    overflow-x: auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .panel .dim { color: var(--code-faint); }
+  .panel .hl { color: var(--code-accent); }
+
+  /* --- 교정 리스트 --- */
+  .corrections { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .corrections li {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    background: var(--panel);
+  }
+  .corrections .was { color: var(--ink-faint); font-size: 0.9rem; text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+  .corrections .now { margin-top: 0.3rem; font-size: 0.95rem; }
+  .corrections .now::before { content: "→ "; color: var(--accent); font-weight: 700; }
+
+  /* --- 한 줄 교훈 --- */
+  .takeaway {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.8rem;
+  }
+  .takeaway .eyebrow { color: var(--accent); margin-bottom: 0.6rem; }
+  .takeaway p { margin: 0; font-size: 1.02rem; color: var(--ink); }
+
+  .next-chapter {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .next-chapter span { color: var(--ink-faint); font-weight: 400; margin-right: 0.5rem; }
+  .meta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    margin-top: 0.6rem;
+  }
+
+  .railnav {
+    position: fixed;
+    right: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    z-index: 20;
+  }
+  .railnav button {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    background: var(--fixed-soft);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .railnav button:hover { transform: scale(1.15); }
+  .railnav button.active { background: var(--accent); }
+  .railnav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .counter {
+    position: fixed;
+    left: 1.4rem;
+    bottom: 1.3rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    z-index: 20;
+    letter-spacing: 0.04em;
+  }
+
+  .hint {
+    position: fixed;
+    left: 1.4rem;
+    bottom: 1.3rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    z-index: 19;
+    opacity: 0;
+    animation: hint-fade 6s ease forwards;
+  }
+  @keyframes hint-fade {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hint { animation: none; opacity: 0.8; }
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <section class="slide" id="s0">
+    <div class="slide-inner">
+      <p class="eyebrow">네트워크 발표 — 01. L2 인접성 &amp; ARP</p>
+      <h1>같은 전선에 꽂혀 있어도 다른 동네일 수 있다</h1>
+      <p class="lede">저번 시간엔 IP랑 MAC이 왜 둘 다 필요한지 봤잖아. 이번엔 그 둘이 실제로 어떻게 "같은 동네"를 판단하는지, 그리고 그 판단이 깨지면 어떤 사고가 나는지 직접 터뜨려봤어.</p>
+
+      <div class="ip-compare">
+        <span>10.10.<span class="diff">10</span>.1</span>
+        <span class="sep">vs</span>
+        <span>10.10.<span class="diff">20</span>.2</span>
+      </div>
+      <p class="bitstrip-cap">세 번째 옥텟만 달라도(<em>10 vs 20</em>) <b>완전히 다른 동네</b>가 돼버려 — 같은 전선에 꽂혀 있어도.</p>
+    </div>
+    <p class="hint">↓ 스크롤 또는 ↓ 키로 다음 슬라이드</p>
+  </section>
+
+  <section class="slide" id="s1">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">01</span> 오늘 알게 된 것</p>
+      <h2 class="slide-title">한 줄씩 정리하면 이래</h2>
+      <div class="concepts">
+        <div class="concept">
+          <h3>"같은 네트워크"는 뭐로 정해져?</h3>
+          <p>전선이 아니라 <b class="mono">IP+마스크 숫자</b>야. 커널이 목적지 IP를 내 IP+마스크로 계산해서 "같은 동네인지"부터 판단해.</p>
+        </div>
+        <div class="concept">
+          <h3>ARP는 언제 일어나?</h3>
+          <p>같은 동네로 판정될 때만. 다른 동네면 ARP를 <b>시도조차 안 하고</b> 라우터(04장에서 배울 거)부터 찾아.</p>
+        </div>
+        <div class="concept wide">
+          <h3>IP 번지수가 중복되면?</h3>
+          <p>번지수(IP) 하나를 두 명이 쓰면, "누구야?" 하고 물을 때 <b>둘 다 손을 들어버려서</b> — 누가 대답하는지가 매번 랜덤해져.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s2">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">02</span> 그림으로 보면</p>
+      <h2 class="slide-title">같은 전선인데 왜 안 통하지?</h2>
+      <figure class="comic-figure">
+        <svg viewBox="0 0 530 220" role="img" aria-label="같은 전선으로 이어진 두 집. 왼쪽은 10동(10.10.10.1), 오른쪽은 20동(10.10.20.2)이라 동네가 달라서, 전선 가운데서 전기신호가 X 표시로 막힌 그림">
+          <polygon points="30,90 85,40 140,90" fill="var(--fixed)" stroke="currentColor" stroke-width="2"/>
+          <rect x="40" y="90" width="90" height="70" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <rect x="60" y="112" width="50" height="24" rx="4" fill="var(--panel)" stroke="currentColor" stroke-width="2"/>
+          <text x="85" y="128" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor">10.10.10.1</text>
+          <text x="85" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">10번 동네</text>
+
+          <polygon points="390,90 445,40 500,90" fill="var(--fixed)" stroke="currentColor" stroke-width="2"/>
+          <rect x="400" y="90" width="90" height="70" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <rect x="420" y="112" width="50" height="24" rx="4" fill="var(--panel)" stroke="currentColor" stroke-width="2"/>
+          <text x="445" y="128" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor">10.10.20.2</text>
+          <text x="445" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">20번 동네</text>
+
+          <line x1="130" y1="130" x2="400" y2="130" stroke="currentColor" stroke-width="4"/>
+          <line x1="265" y1="30" x2="265" y2="180" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" opacity="0.35"/>
+          <circle cx="265" cy="130" r="16" fill="var(--accent)" stroke="currentColor" stroke-width="2"/>
+          <text x="265" y="136" text-anchor="middle" font-size="18" font-weight="700" fill="var(--accent-ink)">×</text>
+
+          <text x="85" y="195" text-anchor="middle" font-size="12" fill="var(--ink-faint)">10.10.10.0/24</text>
+          <text x="445" y="195" text-anchor="middle" font-size="12" fill="var(--ink-faint)">10.10.20.0/24</text>
+        </svg>
+        <figcaption>같은 전선에 물려 있어도, 동네 번호(세 번째 옥텟)가 다르면 h1은 ARP조차 시도 안 하고 바로 거절해버려.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" id="s3">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">03</span> 직접 확인한 것 — 서브넷 불일치</p>
+      <h2 class="slide-title">커널이 아예 시도를 안 한다</h2>
+      <div class="panel">
+        <p class="panel-label">$ h2를 10.10.20.2/24로 바꾸고(물리 연결은 그대로) h1에서 확인</p>
+        <pre>$ ip route get 10.10.20.2
+<span class="hl">RTNETLINK answers: Network unreachable</span>
+
+$ ping -c2 10.10.20.2
+<span class="hl">ping: connect: Network unreachable</span>
+
+<span class="dim"># h2에서 3초간 ARP 엿듣기 (tcpdump -e -ni eth1 arp)</span>
+<span class="hl">0 packets captured</span>  <span class="dim"># 요청 자체가 안 나감</span></pre>
+      </div>
+      <p class="lede" style="margin-bottom:0;">물리적으로 똑같은 선에 꽂혀 있었는데도, 커널은 숫자(IP+마스크)만 보고 "말 걸 필요도 없다"고 즉시 판단해버려.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s4">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">04</span> 그림으로 보면</p>
+      <h2 class="slide-title">같은 번지수, 둘 다 손을 든다</h2>
+      <figure class="comic-figure">
+        <svg viewBox="0 0 480 230" role="img" aria-label="같은 번지수(10.10.10.2)를 쓰는 두 사람이 있고, 둘 다 손을 들며 '나야!'라고 말하는 그림">
+          <rect x="170" y="15" width="140" height="34" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="3"/>
+          <text x="240" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">10.10.10.2 (중복!)</text>
+
+          <path d="M200 49 C 150 70, 120 90, 112 102" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+          <path d="M280 49 C 330 70, 360 90, 368 102" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+
+          <rect x="75" y="70" width="70" height="30" rx="8" fill="var(--panel)" stroke="currentColor" stroke-width="2"/>
+          <polygon points="105,100 115,100 108,112" fill="var(--panel)" stroke="currentColor" stroke-width="2"/>
+          <text x="110" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">나야!</text>
+          <circle cx="110" cy="122" r="18" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <rect x="90" y="140" width="40" height="55" rx="10" fill="var(--fixed-soft)" stroke="currentColor" stroke-width="2"/>
+          <line x1="128" y1="150" x2="155" y2="120" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="157" cy="117" r="6" fill="var(--fixed)"/>
+          <text x="110" y="213" text-anchor="middle" font-size="11" fill="var(--ink-faint)">h2</text>
+
+          <rect x="335" y="70" width="70" height="30" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="2"/>
+          <polygon points="365,100 375,100 368,112" fill="var(--panel)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="370" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">나야!</text>
+          <circle cx="370" cy="122" r="18" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+          <rect x="350" y="140" width="40" height="55" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+          <line x1="352" y1="150" x2="325" y2="120" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="323" cy="117" r="6" fill="var(--accent)"/>
+          <text x="370" y="213" text-anchor="middle" font-size="11" fill="var(--ink-faint)">h3</text>
+        </svg>
+        <figcaption>하나의 주소(10.10.10.2)를 두 명이 쓰면, "누구야?" 질문에 둘 다 "나야!" 하고 응답해버려 — 누가 이기는지는 매번 랜덤.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" id="s5">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">05</span> 직접 확인한 것 — 중복 IP</p>
+      <h2 class="slide-title">4번 물었는데 5번 대답이 왔다</h2>
+      <div class="panel">
+        <p class="panel-label">$ h3한테 h2랑 똑같은 IP를 주고 h1에서 arping</p>
+        <pre>$ arping -c4 -I eth1 10.10.10.2
+Unicast reply from 10.10.10.2 [<span class="hl">AA:C1:AB:92:B9:C2</span>]  ← h3
+Unicast reply from 10.10.10.2 [<span class="hl">AA:C1:AB:9B:AA:49</span>]  ← h2
+Unicast reply from 10.10.10.2 [<span class="hl">AA:C1:AB:9B:AA:49</span>]  ← h2
+Unicast reply from 10.10.10.2 [<span class="hl">AA:C1:AB:9B:AA:49</span>]  ← h2
+Sent 4 probes ... <span class="hl">Received 5 response(s)</span>  <span class="dim"># 보낸 것보다 많음!</span></pre>
+      </div>
+      <p class="lede" style="margin-bottom:0;">둘 다 대답했고, 그때마다 이긴 쪽의 MAC이 h1의 ARP 캐시에 적혀 — 그래서 통신이 가끔은 h2로, 가끔은 h3로 튄다.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s6">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">06</span> 헷갈렸던 것 → 바로잡은 것</p>
+      <h2 class="slide-title">두 번 틀렸고, 두 번 고쳤다</h2>
+      <ul class="corrections">
+        <li>
+          <div class="was">"같은 스위치에 물려 있으면 통신될 거라 생각했음"</div>
+          <div class="now">물리적 연결은 커널의 판단에 아무 영향 없어. IP+마스크로 계산한 "같은 동네"인지만 봐.</div>
+        </li>
+        <li>
+          <div class="was">"IP가 중복되면 아무도 응답 못 할 거라 생각했음"</div>
+          <div class="now">정반대로, 둘 다 응답해버리는 <b>과잉 응답</b>이 문제. 무응답이 아니라 경쟁이 원인이야.</div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide" id="s7">
+    <div class="slide-inner">
+      <p class="eyebrow"><span class="n">07</span> 오늘의 한 줄 정리</p>
+      <div class="takeaway">
+        <p>"같은 네트워크"는 전선이 아니라 IP+마스크 숫자가 정해. 숫자가 다르면 전선이 같아도 말을 안 걸고, 번지수(IP)가 겹치면 둘 다 손을 들어서 오히려 혼란이 생겨.</p>
+      </div>
+      <p class="next-chapter"><span>다음 시간 →</span>02장. 스위치는 프레임을 어떻게 옮기고, 루프가 생기면 왜 폭풍이 되는지</p>
+      <p class="meta">2026-10-24 · 질문→추측→실습검증→설명→피드백</p>
+    </div>
+  </section>
+
+</div>
+
+<nav class="railnav" id="railnav" aria-label="슬라이드 이동"></nav>
+<p class="counter" id="counter">01 / 08</p>
+
+<script>
+(function () {
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('railnav');
+  var counter = document.getElementById('counter');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var current = 0;
+
+  slides.forEach(function (slide, i) {
+    var dot = document.createElement('button');
+    dot.setAttribute('aria-label', '슬라이드 ' + (i + 1) + ' / ' + slides.length);
+    dot.addEventListener('click', function () {
+      slide.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    });
+    rail.appendChild(dot);
+  });
+  var dots = Array.prototype.slice.call(rail.children);
+
+  function setActive(i) {
+    if (i === current) return;
+    current = i;
+    dots.forEach(function (d, idx) { d.classList.toggle('active', idx === i); });
+    counter.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
+        var idx = slides.indexOf(entry.target);
+        entry.target.classList.add('in-view');
+        setActive(idx);
+      }
+    });
+  }, { root: deck, threshold: [0.55] });
+  slides.forEach(function (s) { io.observe(s); });
+
+  window.addEventListener('keydown', function (e) {
+    if (['ArrowDown', 'PageDown', ' '].indexOf(e.key) !== -1 && !e.shiftKey) {
+      e.preventDefault();
+      var next = slides[Math.min(current + 1, slides.length - 1)];
+      next.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    } else if (['ArrowUp', 'PageUp'].indexOf(e.key) !== -1 || (e.key === ' ' && e.shiftKey)) {
+      e.preventDefault();
+      var prev = slides[Math.max(current - 1, 0)];
+      prev.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    }
+  });
+})();
+</script>
