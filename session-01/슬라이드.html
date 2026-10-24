@@ -362,9 +362,9 @@
 
   <section class="slide" id="s0">
     <div class="slide-inner">
-      <p class="eyebrow">NETWORK FUNDAMENTALS LAB — 00</p>
-      <h1>온램프: 비트 하나가 네트워크를 가른다</h1>
-      <p class="lede">본격적인 장애 실습 전, IP/서브넷을 비트 단위로 읽는 법과 MAC·IP의 역할 차이를 질문 → 추측 → 실습 검증 → 피드백 순서로 다졌다.</p>
+      <p class="eyebrow">네트워크 발표 — 00. 온램프</p>
+      <h1>스위치 하나가 완전히 다른 동네를 만든다</h1>
+      <p class="lede">인터넷 주소(IP)를 숫자로만 보면 다 똑같아 보이지? 근데 그걸 전구 스위치처럼 쪼개서 보면, 어디까지가 "동네 이름"이고 어디부터가 "내 번호"인지 딱 보여. 그거랑 와이파이 주소(MAC)가 왜 따로 필요한지, 직접 실습해보면서 알아낸 걸 보여줄게.</p>
 
       <div class="bitstrip-wrap">
         <div class="bitstrip">
@@ -373,7 +373,7 @@
           <span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span>
           <span class="cell free"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free on"></span><span class="cell free"></span>
         </div>
-        <p class="bitstrip-cap"><span class="mono">10.10.10.1/24</span> — <b>앞 24비트는 고정</b>(네트워크), <em>뒤 8비트는 자유</em>(호스트)</p>
+        <p class="bitstrip-cap"><span class="mono">10.10.10.1/24</span> — <b>진한 32칸 중 앞 24칸은 "동네 이름"</b>이라 못 바꿔, <em>뒤 8칸만 내 맘대로 바꿀 수 있는 "내 번호"</em>야</p>
       </div>
     </div>
     <p class="hint">↓ 스크롤 또는 ↓ 키로 다음 슬라이드</p>
@@ -381,24 +381,24 @@
 
   <section class="slide" id="s1">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="n">01</span> 핵심 개념</p>
-      <h2 class="slide-title">이 장에서 확인한 네 가지</h2>
+      <p class="eyebrow"><span class="n">01</span> 오늘 알게 된 것</p>
+      <h2 class="slide-title">한 줄씩 정리하면 이래</h2>
       <div class="concepts">
         <div class="concept">
-          <h3>비트와 옥텟</h3>
-          <p>스위치 하나 = 비트(0/1). 8개를 묶으면 <code>2⁸=256</code>가지 패턴이 나오고, 그걸 사람이 읽기 쉽게 0~255로 번역한 게 옥텟이다.</p>
+          <h3>비트? 옥텟? 그게 뭔데</h3>
+          <p>전구 스위치 하나 켜거나 끄는 게 <code>비트</code>야. 스위치 8개를 묶으면 <code>2⁸=256</code>가지 패턴이 나오는데, 그걸 사람이 읽기 편하게 0~255 숫자로 바꿔 부르는 게 <code>옥텟</code>이고.</p>
         </div>
         <div class="concept">
-          <h3>마스크의 진짜 기준</h3>
-          <p><code>/N</code>은 "앞 N비트가 같은가"가 전부다. 8의 배수(<code>/8 /16 /24</code>)일 때만 옥텟 단위로 단순화되고, <code>/26 /30</code>은 옥텟 안쪽에서 갈린다.</p>
+          <h3>/24, /30 같은 숫자는 뭔 뜻이야</h3>
+          <p>그 숫자만큼 앞에서부터 스위치가 똑같아야 "같은 동네"라는 뜻이야. 8, 16, 24처럼 8의 배수일 때만 딱 옥텟 단위로 끊기고, /26·/30은 옥텟 한가운데서 끊겨.</p>
         </div>
         <div class="concept">
-          <h3>L2 vs L3 — 왜 둘 다 필요한가</h3>
-          <p>IP(L3)는 "어느 네트워크로" 갈지, MAC(L2)는 "이 전선 위 누구에게" 건넬지를 정한다. 전선은 IP를 모른다 — 그래서 ARP가 번역한다.</p>
+          <h3>IP랑 MAC, 왜 둘 다 있어야 해</h3>
+          <p>IP는 "어느 동네로 보낼지" 정하고, MAC은 "그 동네 안에서 누구 손에 직접 쥐여줄지" 정해. 전선은 IP를 몰라서, ARP라는 애가 중간에서 IP를 MAC으로 번역해줘.</p>
         </div>
         <div class="concept">
-          <h3>MAC은 장비가 아니라 인터페이스의 주소</h3>
-          <p>노트북 한 대도 Wi-Fi·이더넷·썬더볼트 칩마다 MAC이 다르다. 그걸 대표하는 숨은 "시스템 MAC"은 존재하지 않는다.</p>
+          <h3>MAC 주소는 노트북 한 대에 하나 아니었어?</h3>
+          <p>아니야. 와이파이 칩, 랜선 포트, 썬더볼트 포트마다 MAC이 따로 붙어있어. "이 노트북 대표 MAC" 같은 숨은 값은 없어.</p>
         </div>
       </div>
     </div>
@@ -406,13 +406,13 @@
 
   <section class="slide" id="s2">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="n">02</span> 직접 확인한 것 — 서브넷 계산</p>
-      <h2 class="slide-title">자유비트 = 32 − 마스크</h2>
+      <p class="eyebrow"><span class="n">02</span> 직접 계산해본 것</p>
+      <h2 class="slide-title">자유로운 스위치가 많을수록 쓸 수 있는 번호도 많아져</h2>
 
       <div class="evidence-row">
         <div class="evidence-head">
           <span class="mask mono">/30</span>
-          <span class="result">사용 가능 호스트 <b>2개</b></span>
+          <span class="result">진짜 쓸 수 있는 번호 <b>2개</b></span>
         </div>
         <div class="bitstrip-wrap">
           <div class="bitstrip sm">
@@ -422,13 +422,13 @@
             <span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell free"></span><span class="cell free"></span>
           </div>
         </div>
-        <p class="cap-note">자유비트 2개 → <code>2²=4</code>가지 → 예약 2개(네트워크·브로드캐스트) 제외 → <span class="mono">10.5.2.0</span>network / <span class="mono">10.5.2.3</span>broadcast, 쓸 수 있는 건 <span class="mono">.1 .2</span></p>
+        <p class="cap-note">32칸 중 자유로운 칸이 2개뿐 → 조합이 <code>2×2=4</code>가지 나와. 근데 그중 2개는 이미 "동네 이름"이랑 "전체한테 외치는 번호(브로드캐스트)"로 예약돼 있어서 못 써 → <span class="mono">10.5.2.0</span>은 동네 이름, <span class="mono">10.5.2.3</span>은 전체 외침용, 진짜 쓰는 건 <span class="mono">.1 .2</span> 딱 2개</p>
       </div>
 
       <div class="evidence-row">
         <div class="evidence-head">
           <span class="mask mono">/28</span>
-          <span class="result">사용 가능 호스트 <b>14개</b></span>
+          <span class="result">진짜 쓸 수 있는 번호 <b>14개</b></span>
         </div>
         <div class="bitstrip-wrap">
           <div class="bitstrip sm">
@@ -438,7 +438,7 @@
             <span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell on"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free"></span><span class="cell free"></span>
           </div>
         </div>
-        <p class="cap-note">자유비트 4개 → <code>2⁴=16</code>가지 → 예약 2개 제외 → <span class="mono">10.5.2.0</span>network / <span class="mono">10.5.2.15</span>broadcast, 쓸 수 있는 건 <span class="mono">.1~.14</span></p>
+        <p class="cap-note">자유로운 칸이 4개로 늘면 조합이 <code>2⁴=16</code>가지로 늘어. 예약된 2개(동네 이름·전체 외침) 빼면 <span class="mono">10.5.2.1~.14</span>까지 14개를 쓸 수 있어.</p>
       </div>
     </div>
   </section>
@@ -446,48 +446,48 @@
   <section class="slide" id="s3">
     <div class="slide-inner">
       <p class="eyebrow"><span class="n">03</span> 직접 확인한 것 — ARP</p>
-      <h2 class="slide-title">IP만으론 프레임을 못 보낸다</h2>
+      <h2 class="slide-title">IP 번호만 알아도 편지를 못 보낸다?</h2>
       <div class="panel">
-        <p class="panel-label">$ ip neigh · tcpdump arp (containerlab h1 ↔ h2 직결)</p>
-        <pre><span class="dim"># ping 전: ARP 테이블 비어있음</span>
-<span class="dim">#</span> ARP, Request who-has 10.0.0.2 tell 10.0.0.1
-<span class="dim">#</span> ARP, Reply   10.0.0.2 is-at <span class="hl">aa:c1:ab:46:f1:c0</span>
-<span class="dim"># ping 후:</span> 10.0.0.2 dev eth1 lladdr <span class="hl">aa:c1:ab:46:f1:c0</span> REACHABLE</pre>
+        <p class="panel-label">$ 컴퓨터 두 대를 전선으로 직접 연결하고 ping 보내봄</p>
+        <pre><span class="dim"># ping 보내기 전: 누구 주소인지 적힌 쪽지(ARP 표)가 텅 비어있음</span>
+<span class="dim">#</span> "10.0.0.2 걔 누구야?" 하고 동네 전체에 소리쳐 물어봄
+<span class="dim">#</span> "나야, 내 MAC은 <span class="hl">aa:c1:ab:46:f1:c0</span>!" 하고 대답이 옴
+<span class="dim"># ping 보낸 뒤:</span> 10.0.0.2 = <span class="hl">aa:c1:ab:46:f1:c0</span> 라고 쪽지에 적힘 (REACHABLE)</pre>
       </div>
-      <p class="lede" style="margin-bottom:0;">이더넷 프레임은 목적지 <b class="mono">MAC</b>이 있어야 전선 위로 나간다 — 스위치·NIC는 IP를 모른다. 그래서 ping 한 번에도 ARP 요청/응답이 먼저 오간다.</p>
+      <p class="lede" style="margin-bottom:0;">전선 위로 뭔가 보내려면 <b class="mono">MAC 주소</b>가 꼭 있어야 해 — 스위치랑 랜카드는 IP 번호를 몰라. 그래서 ping 딱 한 번 보내는데도, 그 전에 "누구 MAC이야?" 하고 물어보고 대답받는 과정(ARP)이 먼저 일어나.</p>
     </div>
   </section>
 
   <section class="slide" id="s4">
     <div class="slide-inner">
       <p class="eyebrow"><span class="n">04</span> 직접 확인한 것 — MAC 주소</p>
-      <h2 class="slide-title">MAC은 "장비 하나"가 아니라 "인터페이스 하나"</h2>
-      <p class="panel-label" style="margin-bottom:0.7rem;">$ networksetup -listallhardwareports (맥북 실제 출력)</p>
+      <h2 class="slide-title">MAC 주소는 노트북 한 대에 하나가 아니다</h2>
+      <p class="panel-label" style="margin-bottom:0.7rem;">$ 내 맥북에서 실제로 찍어본 결과</p>
       <div class="ifaces">
-        <div class="iface"><span class="dot"></span><span class="name mono">Wi-Fi (en0)</span><span class="label">무선 칩</span><span class="mac">7c:f3:4d:ed:12:d6</span></div>
-        <div class="iface"><span class="dot"></span><span class="name mono">Ethernet (en4)</span><span class="label">유선 어댑터</span><span class="mac">5a:f2:11:a2:1f:ce</span></div>
-        <div class="iface"><span class="dot"></span><span class="name mono">Thunderbolt 1 (en1)</span><span class="label">썬더볼트 포트</span><span class="mac">36:24:9f:77:30:c0</span></div>
+        <div class="iface"><span class="dot"></span><span class="name mono">와이파이</span><span class="label">무선 칩 하나</span><span class="mac">7c:f3:4d:ed:12:d6</span></div>
+        <div class="iface"><span class="dot"></span><span class="name mono">랜선 포트</span><span class="label">유선 어댑터 하나</span><span class="mac">5a:f2:11:a2:1f:ce</span></div>
+        <div class="iface"><span class="dot"></span><span class="name mono">썬더볼트 포트</span><span class="label">또 다른 연결구 하나</span><span class="mac">36:24:9f:77:30:c0</span></div>
       </div>
-      <p class="lede" style="margin-bottom:0;">세 MAC이 전부 다르다. 이 중 하나가 "진짜 시스템 대표 MAC"인 게 아니라, <b>인터페이스(칩)마다 MAC이 하나씩</b> 있는 것뿐이다. 숨은 대표 주소는 없다.</p>
+      <p class="lede" style="margin-bottom:0;">세 개 다 MAC 주소가 달라. 이 중에 "이게 이 노트북의 진짜 대표 주소야" 하는 건 없고, 그냥 <b>연결 부품(인터페이스) 하나당 MAC 하나씩</b> 붙어있는 거야. 숨겨진 대표 주소 같은 건 처음부터 없어.</p>
     </div>
   </section>
 
   <section class="slide" id="s5">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="n">05</span> 헷갈렸던 부분 → 교정</p>
-      <h2 class="slide-title">세 번 틀렸고, 세 번 교정됐다</h2>
+      <p class="eyebrow"><span class="n">05</span> 헷갈렸던 것 → 바로잡은 것</p>
+      <h2 class="slide-title">세 번 틀렸고, 세 번 고쳤다</h2>
       <ul class="corrections">
         <li>
-          <div class="was">"/24 호스트 범위는 1~255까지"</div>
-          <div class="now">1~254. <span class="mono">.0</span>은 네트워크 주소, <span class="mono">.255</span>는 브로드캐스트 주소 — 둘 다 예약값.</div>
+          <div class="was">"/24면 1번부터 255번까지 다 쓸 수 있는 줄 알았음"</div>
+          <div class="now">실제로는 1~254번만 써. <span class="mono">.0</span>번은 "동네 이름"으로, <span class="mono">.255</span>번은 "전체한테 외치는 번호"로 이미 예약돼 있어.</div>
         </li>
         <li>
-          <div class="was">"/30의 자유비트는 6개(2⁶=64)"</div>
-          <div class="now">자유비트 = 32−30 = 2개뿐. 2²=4가지 중 예약 2개를 빼면 호스트는 2개.</div>
+          <div class="was">"/30의 자유로운 스위치가 6개인 줄 알았음(2⁶=64)"</div>
+          <div class="now">32에서 30을 빼면 2개뿐이야. 6개는 /26이랑 헷갈려서 나온 숫자.</div>
         </li>
         <li>
-          <div class="was">"MAC도 장비 전체를 대표하는 값이 따로 있다"</div>
-          <div class="now">인터페이스(칩)마다 MAC 1개가 전부. 숨은 "대표 MAC"은 없다.</div>
+          <div class="was">"MAC도 노트북 전체를 대표하는 값이 따로 있는 줄 알았음"</div>
+          <div class="now">그런 대표 MAC은 없어. 연결 부품(인터페이스)마다 하나씩 붙어있는 게 전부야.</div>
         </li>
       </ul>
     </div>
@@ -495,11 +495,11 @@
 
   <section class="slide" id="s6">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="n">06</span> 한 줄 교훈</p>
+      <p class="eyebrow"><span class="n">06</span> 오늘의 한 줄 정리</p>
       <div class="takeaway">
-        <p>IP(L3, 전역 라우팅)와 MAC(L2, 로컬 전달)은 역할이 달라서 둘 다 필요하다. 서브넷 마스크는 비트 단위로 "앞부분이 일치하는가"가 기준이며, 8의 배수일 때만 옥텟으로 단순화된다.</p>
+        <p>IP는 "어느 동네로 보낼지", MAC은 "그 동네 안 누구한테 직접 줄지"를 정해 — 역할이 다르니까 둘 다 필요해. 그리고 서브넷 마스크는 그냥 "앞에서부터 스위치 몇 개가 똑같아야 하는지"를 세는 숫자일 뿐이야.</p>
       </div>
-      <p class="next-chapter"><span>다음 →</span>01장. L2 인접성 &amp; ARP</p>
+      <p class="next-chapter"><span>다음 시간 →</span>01장. 같은 동네 안에서 서로 찾아가는 법 (ARP)</p>
       <p class="meta">2026-10-24 · 질문→추측→실습검증→설명→피드백</p>
     </div>
   </section>
