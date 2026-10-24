@@ -64,7 +64,7 @@ network-fundamentals-lab-study/   (이 레포 자체가 루트, 자체 git)
 
 | 세션 | 다룬 장 | 상태 | 슬라이드 |
 |---|---|---|---|
-| session-01 | 00-온램프 | 완료 (Q1~Q5) | 미착수 |
+| session-01 | 00-온램프 | 완료 (Q1~Q5) | 완료 — https://claude.ai/code/artifact/2057e3b8-1593-4426-8f06-2ae4efa52bac |
 
 **다음 목표**: 01장 — L2 인접성 & ARP
 
